@@ -1,0 +1,13 @@
+.heading{
+    width: 100%;
+    background-color: lightblue;
+}
+
+.heading h1{
+    display: inline;
+}
+
+#instructions_btn{
+    float: right;
+    margin-top: 3px;
+}
