@@ -15,3 +15,7 @@
 .modal-body{
     text-align: left;
 }
+
+canvas{
+    border-radius: 2px;
+}

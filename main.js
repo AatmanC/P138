@@ -20,11 +20,37 @@ var ball = {
     dx:3,
     dy:3
 }
+rightX = "";
+rightY = "";
+score = "";
+
 
 function setup(){
   var canvas =  createCanvas(700,600);
+  canvas.parent("forcanvas");
+
+  video = createCapture(VIDEO);
+	video.size(699,599);
+	video.parent("forcanvas");
+  video.hide();
+
+	poseNet = ml5.poseNet(video, modelLoaded);
+	poseNet.on('pose', gotPoses);
 }
 
+function modelLoaded() {
+	console.log('Model Loaded!');
+}
+
+function gotPoses(results)
+{
+if(results.length > 0)
+{
+    console.log(results);
+  noseX = results[0].pose.nose.x;
+  noseY = results[0].pose.nose.y;
+}
+}
 
 function draw(){
 
