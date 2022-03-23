@@ -20,10 +20,12 @@ var ball = {
     dx:3,
     dy:3
 }
+
 rightX = "";
 rightY = "";
 score = "";
 
+game_status = "";
 
 function setup(){
   var canvas =  createCanvas(700,600);
@@ -38,6 +40,11 @@ function setup(){
 	poseNet.on('pose', gotPoses);
 }
 
+function preLoad(){
+  song=loadSound("ball_touch_paddle.wav");
+  song1=loadSound("missed.wav");
+}
+
 function modelLoaded() {
 	console.log('Model Loaded!');
 }
@@ -47,15 +54,27 @@ function gotPoses(results)
 if(results.length > 0)
 {
     console.log(results);
-  noseX = results[0].pose.nose.x;
-  noseY = results[0].pose.nose.y;
+  rightX = results[0].pose.rightWrist.x;
+  rightY = results[0].pose.rightWrist.y;
 }
+}
+
+function startGame(){
+  game_status = "start";
+  document.getElementById("status").innerHTML = "Game is loaded!";
 }
 
 function draw(){
-
+  if(game_status == "start")
+  if(score > 0.2){
+    fill("#FF0000");
+    stroke("#FF0000");
+    circle(rightX, rightY, 10);
+  }
  background(0); 
 
+ image(video, 0, 0, 700, 600);
+ 
  fill("black");
  stroke("black");
  rect(680,0,20,700);
@@ -71,7 +90,7 @@ function draw(){
    fill(250,0,0);
     stroke(0,0,250);
     strokeWeight(0.5);
-   paddle1Y = mouseY; 
+   paddle1Y = rightY; 
    rect(paddle1X,paddle1Y,paddle1,paddle1Height,100);
    
    
@@ -104,6 +123,11 @@ function reset(){
    
 }
 
+function restart(){
+  loop();
+  pcscore = 0;
+  playerscore = 0;
+}
 
 //function midline draw a line in center
 function midline(){
@@ -143,11 +167,13 @@ function move(){
   if (ball.x-2.5*ball.r/2< 0){
   if (ball.y >= paddle1Y&& ball.y <= paddle1Y + paddle1Height) {
     ball.dx = -ball.dx+0.5; 
+    song.play();
   }
   else{
     pcscore++;
     reset();
     navigator.vibrate(100);
+    song1.play();
   }
 }
 if(pcscore ==4){
@@ -158,7 +184,7 @@ if(pcscore ==4){
     stroke("white");
     textSize(25)
     text("Game Over!☹☹",width/2,height/2);
-    text("Reload The Page!",width/2,height/2+30)
+    text("Press the Restart button to restart the game!",width/2,height/2+30)
     noLoop();
     pcscore = 0;
 }
